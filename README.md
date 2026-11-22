@@ -10,7 +10,7 @@ inflow data from 1932 to 2001 and a daily water balance model of the reservoir.
 
 **Methods:** daily water balance simulation · reliability, resilience and vulnerability metrics ·
 multi-objective optimisation with NSGA-II · climate scenarios from a flow duration curve model ·
-stress testing
+stress testing · regret-based robustness analysis
 
 ## 1. The problem is timing, not quantity
 
@@ -79,11 +79,43 @@ Amplified Extremes model also cuts the mean by 20%, but makes flows 50% more var
 simple change in the mean, gives false confidence. Designs should be stress-tested across many
 possible futures. That is the next step of this project.
 
-## Next step: robustness under deep uncertainty
+## 5. Which adaptation option is robust?
 
-The next part tests the drought measures from Section 3 across a large set of climate futures, using
-regret and scenario discovery to find which designs stay acceptable and under which conditions they
-fail.
+I tested four options across seven drier futures, with inflows cut by 0 to 30%:
+**L0** keeps the current set-up, **L1** lowers the nuclear plant intake to the depth of the Baltimore
+intake, **L2** adds a desalination plant that supplies Baltimore whenever the reservoir is not full,
+and **L3** combines L1 and L2.
+
+![Robustness of adaptation options](figures/05_robustness.png)
+
+For each future I measured the regret of each option, which is the reliability lost compared with the
+best option in that same future. The table shows the worst regret over all seven futures.
+
+| Option | Baltimore, from reservoir | Chester | Nuclear plant | Env. flows |
+|---|---|---|---|---|
+| L0 current | 0.000 | 0.017 | 0.061 | 0.006 |
+| L1 deeper nuclear intake | 0.001 | 0.017 | 0.013 | 0.006 |
+| L2 desalination | 0.094 | 0.000 | 0.040 | 0.000 |
+| **L3 both** | 0.095 | **0.001** | **0.000** | **0.000** |
+
+- **L3 is the robust choice.** It has zero or almost zero regret for every user except Baltimore.
+- **Baltimore's loss is not a real shortage.** Under L2 and L3, its reliability only counts water
+  taken from the reservoir, and desalination supplies the rest by design. The same metric means
+  different things for different users, so regret tables need care.
+- **Options help more than one user.** Desalination also raises the nuclear plant's reliability from
+  0.974 to 0.982, because the water Baltimore no longer takes stays in the reservoir. The deeper intake
+  alone raises it to 0.993, which agrees with the near free improvement found in Section 3.
+- **Hydropower depends on the climate, not on the options.** A 30% flow cut lowers it from 2,064 to
+  1,582 GWh per year, but the options change it by less than 0.2%.
+
+**Limits:** these futures only cut flows uniformly, and Section 4 showed that this underestimates the
+risk, so the regrets here are likely optimistic. The analysis also ignores the cost and energy use of
+desalination, and seven futures without probabilities cannot say how likely each outcome is.
+
+## Next step
+
+Repeat the robustness test with Amplified Extremes futures instead of uniform cuts, and use scenario
+discovery to find the conditions under which each option fails.
 
 ## Who did what
 
@@ -94,6 +126,7 @@ fail.
 | Scripts in `analysis/` that rebuild every figure and table | Mine |
 | The NSGA-II run in `results/pareto_front_nsga2.csv` and its analysis | Mine, run with the course optimisation set-up |
 | The scenarios that separate the variability and low-flow effects | Mine, built on top of the course climate model |
+| The robustness test in Section 5 | Course set-up of futures and options; my own script, regret summary and interpretation |
 
 ## Reproducing the results
 
@@ -108,6 +141,7 @@ python 01_inflow_vs_demand.py
 python 02_drought_storage.py
 python 03_pareto_front.py
 python 04_climate_scenarios.py
+python 05_robustness.py
 ```
 
 Figures go to `figures/` and tables to `results/`. `03_pareto_front.py` reads the saved NSGA-II
