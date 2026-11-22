@@ -122,11 +122,18 @@ discovery to find the conditions under which each option fails.
 | Part | Source |
 |---|---|
 | Reservoir model, water balance, performance metrics, flow duration curve model, data | Course material, not included in this repository |
-| Analysis, interpretation and all findings above | Mine |
-| Scripts in `analysis/` that rebuild every figure and table | Mine |
-| The NSGA-II run in `results/pareto_front_nsga2.csv` and its analysis | Mine, run with the course optimisation set-up |
-| The scenarios that separate the variability and low-flow effects | Mine, built on top of the course climate model |
-| The robustness test in Section 5 | Course set-up of futures and options; my own script, regret summary and interpretation |
+| Analysis, interpretation and findings | Mine, developed while working through the course tutorials with help from Claude, an AI assistant |
+| Scripts in `analysis/` that rebuild every figure and table | Written by Claude for this repository from my tutorial work; I checked the numbers against my tutorial results |
+| The NSGA-II run in `results/pareto_front_nsga2.csv` | Mine, run with the course optimisation set-up |
+| The scenarios that separate the variability and low-flow effects | Set up and run with Claude, on top of the course climate model |
+| The robustness test in Section 5 | Course set-up of futures and options; script and regret summary by Claude; interpretation reviewed and agreed by me |
+
+### Use of AI
+
+I used Claude, an AI assistant made by Anthropic, while working on the course tutorials and to
+build this repository. Claude wrote the scripts in `analysis/` and drafted this README. I decided
+what to include, reviewed every result and interpretation, and the findings follow my answers to
+the course questions.
 
 ## Reproducing the results
 
