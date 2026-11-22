@@ -5,7 +5,7 @@ how much do the answers change if the climate changes? This project follows thes
 the **Conowingo reservoir** on the Susquehanna River, which supplies Baltimore, Chester and a
 nuclear power plant, and must also meet environmental flows and limit flooding downstream.
 
-The work was done in CE48V, a water resources systems course, in Fall 2026. It uses 70 years of daily
+The work was done in CE48V, a water resources systems course at Boğaziçi University, in Fall 2026. It uses 70 years of daily
 inflow data from 1932 to 2001 and a daily water balance model of the reservoir.
 
 **Methods:** daily water balance simulation · reliability, resilience and vulnerability metrics ·
