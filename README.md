@@ -209,8 +209,22 @@ Figures go to `figures/` and tables to `results/`. `03_pareto_front.py` reads th
 front instead of re-running the optimisation, because NSGA-II is stochastic and a new run would
 shift every number.
 
+## Acknowledgements
+
+This work was done in CE48V, Water Resources Systems Analysis and Intelligent Decision Support,
+taught by Dr. Veysel Yıldız at Boğaziçi University in Fall 2026. The reservoir model, the tutorials,
+the inflow data and the flow duration curve model were provided as course material. They are not
+included here and belong to the course.
+
 ## References
 
+- Deb, K., Pratap, A., Agarwal, S. and Meyarivan, T. (2002), A fast and elitist multiobjective
+  genetic algorithm: NSGA-II, *IEEE Transactions on Evolutionary Computation*, 6(2), 182-197.
+- Hashimoto, T., Stedinger, J. R. and Loucks, D. P. (1982), Reliability, resiliency, and
+  vulnerability criteria for water resource system performance evaluation, *Water Resources
+  Research*, 18(1), 14-20.
+- Rhodium, the open-source library for robust decision making used in the course optimisation
+  set-up, Project Platypus: https://github.com/Project-Platypus/Rhodium
 - Zatarain Salazar et al. (2016), source of the Conowingo system description used in the course.
 - Yildiz et al. (2023), *Hydrology and Earth System Sciences*, 27, 2499, the flow duration curve
   model behind the Amplified Extremes scenarios: https://hess.copernicus.org/articles/27/2499/2023/
