@@ -13,6 +13,15 @@ RESULTS.mkdir(exist_ok=True)
 metrics.to_csv(RESULTS / "historical_performance.csv", index=False)
 print(metrics.to_string())
 
+# Resilience in the course model is failure events divided by failure days, so 1/resilience is
+# the average length of a failure. Vulnerability is the average worst shortfall of an event.
+rrv = metrics.set_index("Name")[["Reliability (0-1)", "Resilience (-)", "Vulnerability", "Failure count"]].copy()
+rrv["Mean failure length (days)"] = 1 / rrv["Resilience (-)"].astype(float)
+rrv.round(3).to_csv(RESULTS / "historical_rrv.csv")
+print(rrv.round(3).to_string())
+hydropower = reservoir.daily_production(balance).sum() / 70 / 1000
+print(f"Hydropower: {hydropower:,.0f} GWh per year")
+
 storage = balance["Storage (m3)"] / 1e6
 full = reservoir.full_lake_volume / 1e6
 dead = reservoir.dead_storage / 1e6

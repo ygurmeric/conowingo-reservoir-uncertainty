@@ -1,4 +1,4 @@
-# Conowingo Reservoir: Multi-Objective Operation Under Climate Uncertainty
+# Conowingo Reservoir: Drought Measures and Adaptation Under Climate Uncertainty
 
 How reliable is a water supply reservoir today, which drought measures are worth taking, and
 how much do the answers change if the climate changes? This project follows these questions for
@@ -11,6 +11,18 @@ inflow data from 1932 to 2001 and a daily water balance model of the reservoir.
 **Methods:** daily water balance simulation · reliability, resilience and vulnerability metrics ·
 multi-objective optimisation with NSGA-II · climate scenarios from a flow duration curve model ·
 stress testing · regret-based robustness analysis
+
+## Key findings
+
+- **Timing, not quantity, is the problem.** The river carries 7 times more water than all users need,
+  but the reservoir can store only about 2 days of mean inflow, so summer droughts empty it.
+- **One drought measure is almost free.** A deeper intake raises the nuclear plant's reliability by
+  11 points in the 1960s drought and costs Baltimore only 0.3 points.
+- **The shape of climate change matters more than its size.** More variable flows with lower low
+  flows hurt every user more than a uniform 20% cut, even when the mean flow does not change.
+- **Combining a deeper intake with desalination is the robust option.** It has the lowest regret
+  in both uniform and amplified-extremes futures, but in the harsher futures no option keeps the
+  nuclear plant at today's reliability.
 
 ## 1. The problem is timing, not quantity
 
@@ -26,10 +38,26 @@ bridge these months, and its usable storage is only **209 hm³**.
 ![Storage in the 1960s drought](figures/02_drought_storage.png)
 
 With its standard operating policy the reservoir is full on **93% of days**, but in the 1962-1967
-drought it is drawn down every summer and reaches dead storage in 1964 and 1966. Over the full
-record, the nuclear plant has the lowest reliability of the three water users, **0.974**, against
-0.980 for Chester and 0.994 for Baltimore. Its intake is the shallowest, so it is the first to fail
-when the lake level drops.
+drought it is drawn down every summer and reaches dead storage in 1964 and 1966. The table shows
+the three performance measures over the full 1932-2001 record.
+
+| User | Reliability | Failure events | Mean failure length | Vulnerability |
+|---|---|---|---|---|
+| Baltimore | 0.994 | 8 | 21 days | 100% |
+| Chester | 0.980 | 12 | 42 days | 100% |
+| Nuclear plant | 0.974 | 17 | 39 days | 100% |
+| Environmental flows | 0.998 | 6 | 10 days | 34% |
+| Flood protection | 0.9997 | 4 | 2 days | 36% |
+
+- **Reliability** is the share of days without failure. The nuclear plant has the lowest value
+  because its intake is the shallowest, so it is the first to fail when the lake level drops.
+- **Resilience** shows how fast the system recovers. In the course model it is failure events
+  divided by failure days, so its inverse is the mean failure length shown above. Chester and the
+  nuclear plant stay without water for about six weeks once they fail.
+- **Vulnerability** is the mean worst shortfall of a failure event. For the three water users it is
+  100%, because a failure means the lake is below the intake and the supply stops completely. This
+  is why reliability alone hides how severe these failures are.
+- The reservoir also produces **2,064 GWh** of hydropower per year on average.
 
 ## 3. Which drought measures are worth it?
 
@@ -49,6 +77,12 @@ Baltimore, the reservoir level that triggers it, and a deeper intake for the nuc
 - **The framing matters.** Without Chester as an objective, only 17 of the 100 designs stay
   non-dominated. Most of the front exists because of a 2-point difference, which suggests treating
   Chester as a constraint instead of an objective.
+- **The search did not fully converge.** I evaluated one design by hand with the same model: no
+  demand reduction and the nuclear intake at its deepest allowed level. It gives 0.927 for both
+  Baltimore and the nuclear plant and 0.838 for Chester, shown as a star in the figure, and it
+  dominates 2 of the 100 designs on the front. With 2,000 evaluations NSGA-II found the right
+  region but not the edge of the front, so the front should be read as a good approximation and
+  not as the exact optimum.
 
 ## 4. A changing climate: the extremes matter more than the mean
 
@@ -77,45 +111,65 @@ Amplified Extremes model also cuts the mean by 20%, but makes flows 50% more var
 
 **What this means for decisions:** testing designs against the historical record, or against a
 simple change in the mean, gives false confidence. Designs should be stress-tested across many
-possible futures. That is the next step of this project.
+possible futures, which is what Section 5 does.
 
 ## 5. Which adaptation option is robust?
 
-I tested four options across seven drier futures, with inflows cut by 0 to 30%:
-**L0** keeps the current set-up, **L1** lowers the nuclear plant intake to the depth of the Baltimore
-intake, **L2** adds a desalination plant that supplies Baltimore whenever the reservoir is not full,
-and **L3** combines L1 and L2.
+I tested four options: **L0** keeps the current set-up, **L1** lowers the nuclear plant intake to
+the depth of the Baltimore intake, **L2** adds a desalination plant that supplies Baltimore whenever
+the reservoir is not full, and **L3** combines L1 and L2.
+
+Each option was run in two sets of seven drier futures. In the **uniform** set, as in the course
+tutorial, all inflows are cut by 0 to 30%. Section 4 showed that uniform cuts understate the risk, so
+I added an **amplified-extremes** set: the mean flow is cut by 0 to 30% as before, but flows are also
+50% more variable and low flows 40% lower.
 
 ![Robustness of adaptation options](figures/05_robustness.png)
 
 For each future I measured the regret of each option, which is the reliability lost compared with the
-best option in that same future. The table shows the worst regret over all seven futures.
+best option in that same future. The table shows the worst regret over all seven futures in each set.
 
 | Option | Baltimore, from reservoir | Chester | Nuclear plant | Env. flows |
 |---|---|---|---|---|
+| *Uniform futures* | | | | |
 | L0 current | 0.000 | 0.017 | 0.061 | 0.006 |
 | L1 deeper nuclear intake | 0.001 | 0.017 | 0.013 | 0.006 |
 | L2 desalination | 0.094 | 0.000 | 0.040 | 0.000 |
 | **L3 both** | 0.095 | **0.001** | **0.000** | **0.000** |
+| *Amplified-extremes futures* | | | | |
+| L0 current | 0.000 | 0.025 | 0.101 | 0.014 |
+| L1 deeper nuclear intake | 0.001 | 0.025 | 0.022 | 0.014 |
+| L2 desalination | 0.166 | 0.000 | 0.072 | 0.000 |
+| **L3 both** | 0.166 | **0.001** | **0.000** | **0.001** |
 
-- **L3 is the robust choice.** It has zero or almost zero regret for every user except Baltimore.
+- **L3 is the robust choice in both sets.** It has zero or almost zero regret for every user except
+  Baltimore, so the ranking of the options does not depend on how the futures are built.
+- **The size of the risk does depend on it.** With a 30% cut, the nuclear plant's reliability under
+  L3 is 0.973 in the uniform futures but only 0.902 in the amplified-extremes futures. Doing nothing
+  drops it to 0.801. Regrets are also about twice as large, so choosing the wrong option costs more
+  when the extremes grow.
 - **Baltimore's loss is not a real shortage.** Under L2 and L3, its reliability only counts water
   taken from the reservoir, and desalination supplies the rest by design. The same metric means
   different things for different users, so regret tables need care.
 - **Options help more than one user.** Desalination also raises the nuclear plant's reliability from
   0.974 to 0.982, because the water Baltimore no longer takes stays in the reservoir. The deeper intake
   alone raises it to 0.993, which agrees with the near free improvement found in Section 3.
-- **Hydropower depends on the climate, not on the options.** A 30% flow cut lowers it from 2,064 to
-  1,582 GWh per year, but the options change it by less than 0.2%.
+- **Hydropower depends on the climate, not on the options.** A uniform 30% cut lowers it from 2,064
+  to 1,582 GWh per year, and the amplified-extremes futures lower it further, to 1,832 GWh with no
+  cut in the mean and 1,272 GWh with a 30% cut, because more water arrives in floods that the
+  turbines cannot use. The options change it by less than 0.5%.
 
-**Limits:** these futures only cut flows uniformly, and Section 4 showed that this underestimates the
-risk, so the regrets here are likely optimistic. The analysis also ignores the cost and energy use of
-desalination, and seven futures without probabilities cannot say how likely each outcome is.
+The figure uses the same vertical scale in every panel, so the small changes in environmental flows
+are shown at their true size.
+
+**Limits:** the analysis ignores the cost and energy use of desalination, and seven futures per set
+without probabilities cannot say how likely each outcome is. The amplified-extremes set changes only
+the mean, with the variability and low-flow multipliers fixed.
 
 ## Next step
 
-Repeat the robustness test with Amplified Extremes futures instead of uniform cuts, and use scenario
-discovery to find the conditions under which each option fails.
+Use scenario discovery to vary the mean, variability and low-flow multipliers together and find the
+conditions under which each option fails.
 
 ## Who did what
 
@@ -125,8 +179,9 @@ discovery to find the conditions under which each option fails.
 | Analysis, interpretation and findings | Mine, developed while working through the course tutorials with help from Claude, an AI assistant |
 | Scripts in `analysis/` that rebuild every figure and table | Written by Claude for this repository from my tutorial work; I checked the numbers against my tutorial results |
 | The NSGA-II run in `results/pareto_front_nsga2.csv` | Mine, run with the course optimisation set-up |
+| The convergence check in Section 3 | Hand-made design from my tutorial answers; script by Claude |
 | The scenarios that separate the variability and low-flow effects | Set up and run with Claude, on top of the course climate model |
-| The robustness test in Section 5 | Course set-up of futures and options; script and regret summary by Claude; interpretation reviewed and agreed by me |
+| The robustness test in Section 5 | Course set-up of options and uniform futures; amplified-extremes futures, script and regret summary by Claude; interpretation reviewed and agreed by me |
 
 ### Use of AI
 

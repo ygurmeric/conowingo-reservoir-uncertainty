@@ -47,12 +47,28 @@ print(f"\nWithout Chester as an objective, {two_obj.sum()} of {len(front)} solut
 for col in OBJECTIVES:
     print(f"{col}: range {front[col].max() - front[col].min():.3f}")
 
+# Convergence check. A hand-made design with no demand reduction and the nuclear intake at its
+# deepest allowed level was evaluated with the course Tutorial 3 model. Its result is saved in
+# results/, because the evaluation function belongs to the course and is not shared here.
+check = pd.read_csv(RESULTS / "pareto_convergence_check.csv").set_index("design")
+no_action = check.loc["no action", ["baltimore_vol_rel", "chester_rel", "nuclear_rel"]].values
+intake_only = check.loc["intake only", ["baltimore_vol_rel", "chester_rel", "nuclear_rel"]].values
+values = front[OBJECTIVES].values
+dominated = ((intake_only >= values).all(axis=1) & (intake_only > values).any(axis=1)).sum()
+print(f"\nNo action: Baltimore {no_action[0]:.3f}, Chester {no_action[1]:.3f}, nuclear {no_action[2]:.3f}")
+print(f"Intake only: Baltimore {intake_only[0]:.3f}, Chester {intake_only[1]:.3f}, nuclear {intake_only[2]:.3f}")
+print(f"The intake-only design dominates {dominated} of the {len(front)} front members")
+
 fig, ax = plt.subplots(figsize=(7, 5))
 sc = ax.scatter(front["baltimore_vol_rel"], front["nuclear_rel"], c=front["chester_rel"], cmap="viridis", s=30)
-ax.scatter([0.930], [0.815], marker="X", s=120, color="tab:red", label="No action")
+ax.plot(no_action[0], no_action[2], "X", ms=11, color="tab:red", ls="none", label="No action")
+ax.plot(intake_only[0], intake_only[2], "*", ms=16, color="tab:red", mec="white", ls="none",
+        label="Deeper intake only")
+ax.annotate("Nuclear +11 points,\nBaltimore -0.3 points", xy=(intake_only[0], intake_only[2]),
+            xytext=(0.895, 0.950), fontsize=9, arrowprops=dict(arrowstyle="->", color="0.3"))
 fig.colorbar(sc, ax=ax, label="Chester reliability")
 ax.set_xlabel("Baltimore volumetric reliability")
 ax.set_ylabel("Nuclear plant reliability")
 ax.set_title("Pareto front of drought measures, 1962-1967")
-ax.legend(frameon=False, loc="lower left")
+ax.legend(frameon=False, loc="lower left", numpoints=1)
 save(fig, "03_pareto_front.png")
