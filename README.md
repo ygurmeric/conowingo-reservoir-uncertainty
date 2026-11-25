@@ -131,8 +131,7 @@ discovery to find the conditions under which each option fails.
 ### Use of AI
 
 I used Claude, an AI assistant made by Anthropic, while working on the course tutorials and to
-build this repository. Claude wrote the scripts in `analysis/` and drafted this README. I decided
-what to include, reviewed every result and interpretation, and the findings follow my answers to
+build this repository. I decided what to include, reviewed every result and interpretation, and the findings follow my answers to
 the course questions.
 
 ## Reproducing the results
